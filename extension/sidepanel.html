@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vid Studio</title>
+  <link rel="stylesheet" href="sidepanel.css" />
+</head>
+<body>
+  <div id="app" class="app">
+    <div class="topbar">
+      <div class="logo-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5.5v13l10.5-6.5z"/></svg></div>
+      <div class="logo-text"><strong>Vid Studio</strong><span>ภาพ + คลิป 9:16 ใน Meta AI · v<span id="app-ver">—</span></span></div>
+      <div class="status-pill" id="status-pill" title=""><span id="status-dot" class="dot-status"></span><span id="status-badge">—</span></div>
+    </div>
+    <nav class="tabbar">
+      <button class="nav-item active" data-tab="persona"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg> ตัวตน</button>
+      <button class="nav-item" data-tab="product"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg> สินค้า</button>
+      <button class="nav-item" data-tab="queue"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg> คิว <span id="queue-count" class="count-badge hidden"></span></button>
+      <button class="nav-item" data-tab="settings"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg> ตั้งค่า</button>
+    </nav>
+
+    <main class="content">
+      <div id="lic-banner" class="key-banner hidden"></div>
+      <div id="key-banner" class="key-banner hidden"><span>🔑 ยังไม่ได้ใส่ <b>DeepSeek API Key</b> — AI ยังเขียนพรอมต์ให้ไม่ได้</span><button class="btn-mini" id="go-settings">ไปใส่คีย์</button></div>
+
+      <!-- ===== ตัวตน ===== -->
+      <section class="tab-panel active" id="tab-persona">
+        <header class="hero">
+          <h2>สร้างตัวตน</h2>
+          <p>กดสร้างครั้งเดียว — AI เขียนพรอมต์ทีละชุดระหว่างที่ Meta AI สร้างภาพ + คลิปให้อัตโนมัติ</p>
+        </header>
+
+        <div class="panel-card">
+          <div class="card-title"><span class="num">1</span>ตัวละคร</div>
+          <div class="field">
+            <label class="field-label" for="persona-name">ชื่อ / คาแรกเตอร์</label>
+            <input type="text" class="text-input" id="persona-name" maxlength="80" placeholder="เช่น ครูพิม, นักธุรกิจสาว, เชฟหนุ่ม" />
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label class="field-label" for="persona-count">จำนวนชุด</label>
+              <div class="stepper"><button type="button" class="step" data-for="persona-count" data-step="-1" aria-label="ลดจำนวน">−</button><input type="number" class="text-input" id="persona-count" value="5" min="1" max="50" /><button type="button" class="step" data-for="persona-count" data-step="1" aria-label="เพิ่มจำนวน">+</button></div>
+            </div>
+            <div class="field">
+              <span class="field-label">เพศ</span>
+              <div class="seg" role="radiogroup" aria-label="เพศ">
+                <label><input type="radio" name="persona-gender" value="female" checked /><span>👩 หญิง</span></label>
+                <label><input type="radio" name="persona-gender" value="male" /><span>👨 ชาย</span></label>
+              </div>
+            </div>
+          </div>
+
+          <label class="toggle" id="persona-lib-box">
+            <input type="checkbox" id="persona-lib-toggle" />
+            <span class="toggle-text"><b>สุ่มภาพจากคลังพรอมต์ของฉัน</b><small>ไม่ใช้ AI · เร็วมาก · หน้าไม่ซ้ำ · ไม่มีบทพูด</small></span>
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+          <div class="ref-note hidden" id="persona-lib-note"></div>
+
+          <div class="ai-only" id="persona-ai-fields">
+            <div class="field" id="persona-skin-field">
+              <label class="field-label" for="persona-skin">โทนสีผิว</label>
+              <select class="text-input" id="persona-skin">
+                <option value="very fair bright clear skin">ผิวขาวออร่า (เน็ตไอดอล)</option>
+                <option value="fair smooth clear skin">ผิวขาวเนียนใส</option>
+                <option value="natural healthy Thai skin tone">โทนผิวธรรมชาติ</option>
+                <option value="warm honey / light tan healthy skin">ผิวสองสีสุขภาพดี</option>
+                <option value="sun-kissed tan healthy skin">ผิวแทนสุขภาพดี</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label" for="persona-theme">ธีม (การแต่งกาย + ฉาก)</label>
+              <select class="text-input" id="persona-theme">
+                <option value="random">— สุ่ม / ตามที่กรอกเอง —</option>
+                <option value="teacher">👩‍🏫 ครู</option>
+                <option value="ceo">💼 นักธุรกิจ / CEO</option>
+                <option value="business">🏢 ออฟฟิศ / ทำงาน</option>
+                <option value="student">🎓 นักศึกษา</option>
+                <option value="fitness">🏋️ ฟิตเนส / สุขภาพ</option>
+                <option value="cafe">☕ คาเฟ่ / ไลฟ์สไตล์</option>
+                <option value="chef">🍳 ทำอาหาร / เชฟ</option>
+                <option value="travel">✈️ ท่องเที่ยว</option>
+                <option value="knowledge">📚 สายให้ความรู้</option>
+                <option value="art">🎨 ศิลปะ / ครีเอทีฟ</option>
+                <option value="streetwear">🧢 สตรีท / แฟชั่น</option>
+                <option value="outdoor">🌿 เอาท์ดอร์ / กลางแจ้ง</option>
+                <option value="glamour">✨ หรูหรา / งานอีเวนต์</option>
+                <option value="beach">🏖️ ทะเล / ซัมเมอร์</option>
+                <option value="loungewear">🛋️ อยู่บ้านชิลๆ</option>
+                <option value="car_lover">🚗 สายรถ</option>
+                <option value="party">🎉 ปาร์ตี้ / สังสรรค์</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label" for="persona-details">รายละเอียดเพิ่มเติม <span class="hint-strong">AI อ่านช่องนี้ก่อนเสมอ</span></label>
+              <textarea class="text-input" id="persona-details" rows="3" placeholder="เช่น อายุ 30 บุคลิกอบอุ่น ชอบเล่าเรื่องการเงินง่ายๆ"></textarea>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="persona-16s-toggle" />
+              <span class="toggle-text"><b>คลิป 2 ท่อน</b><small>บทพูดท่อนที่ 2 ต่อเนื่อง = วิดีโอที่ 2 จากภาพเดียวกัน (คลิปละ 10 วิ)</small></span>
+              <span class="switch" aria-hidden="true"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="panel-card lock-card">
+          <div class="card-title"><span class="num">2</span>ล็อกหน้า / ล็อกชุด</div>
+          <span class="field-label">ใบหน้า</span>
+          <div class="seg seg-3" role="radiogroup" aria-label="ล็อกใบหน้า">
+            <label><input type="radio" name="persona-face" value="none" checked /><span>🎲 คนละคน</span></label>
+            <label><input type="radio" name="persona-face" value="first" /><span>👤 คนเดิมทุกชุด</span></label>
+            <label><input type="radio" name="persona-face" value="photo" /><span>📷 จากรูปหน้า</span></label>
+          </div>
+          <div class="slot hidden" data-slot="persona-face" data-title="รูปหน้า — หน้าตรง ชัด แสงดี"></div>
+
+          <span class="field-label gap">ชุด</span>
+          <div class="seg seg-2" role="radiogroup" aria-label="ล็อกชุด">
+            <label><input type="radio" name="persona-outfit" value="free" checked /><span>👗 เปลี่ยนตามธีม</span></label>
+            <label><input type="radio" name="persona-outfit" value="first" /><span>🔁 ชุดเดิมทุกชุด</span></label>
+            <label><input type="radio" name="persona-outfit" value="photo" /><span>📷 จากรูปชุด</span></label>
+            <label><input type="radio" name="persona-outfit" value="face_photo" /><span>🧍 ชุดในรูปหน้า</span></label>
+          </div>
+          <div class="slot hidden" data-slot="persona-outfit" data-title="รูปชุด — เห็นทั้งชุดชัด"></div>
+
+          <div class="lock-note" id="persona-lock-note"></div>
+          <details class="lock-preview hidden" id="persona-lock-preview"><summary>ดูคำสั่งล็อกที่ส่งให้ Meta AI</summary><div class="block-body en"></div></details>
+        </div>
+
+        <div class="panel-card ai-only" id="persona-overlay-field">
+          <div class="card-title"><span class="num">3</span>ข้อความบนภาพ <span class="opt">ไม่บังคับ</span></div>
+          <label class="toggle">
+            <input type="checkbox" id="persona-overlay-ai" />
+            <span class="toggle-text"><b>✨ ให้ AI คิดข้อความให้</b><small>แคปชันไทยไม่ซ้ำกัน เข้ากับภาพแต่ละชุด</small></span>
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+          <textarea class="text-input" id="persona-overlay-text" rows="2" aria-label="ข้อความบนภาพ" placeholder="ชื่อช่อง / สโลแกน เช่น โสด ภาระไม่มี"></textarea>
+          <p class="hint">ไม่เปิด AI = ใช้ข้อความนี้ทุกชุด · เปิด AI + พิมพ์ = คำแรกเป็น “คำหลัก” ทุกชุด · Meta AI อาจสะกดไทยบนภาพไม่ถูกเสมอ</p>
+        </div>
+
+        <div class="panel-card">
+          <div class="card-title"><span class="num">4</span>สร้างใน Meta AI</div>
+          <div class="seg" role="radiogroup" aria-label="สร้างใน Meta AI">
+            <label><input type="radio" name="persona-output" value="video" checked /><span>🎬 ภาพ + วิดีโอ</span></label>
+            <label><input type="radio" name="persona-output" value="image" /><span>🖼️ ภาพอย่างเดียว</span></label>
+          </div>
+        </div>
+
+        <div class="action-bar">
+          <button class="btn-primary" id="btn-gen-persona"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.6L18 9l-4.2 1.4L12 15l-1.8-4.6L6 9l4.2-1.4z"/><path d="M19 14v4M21 16h-4"/></svg> สร้าง</button>
+        </div>
+      </section>
+
+      <!-- ===== สินค้า ===== -->
+      <section class="tab-panel" id="tab-product">
+        <header class="hero">
+          <h2>สินค้า</h2>
+          <p>ระบบตรวจหมวดสินค้า ล็อกฉากให้สมจริง แล้วส่งรูปสินค้าจริงให้ Meta AI สร้างภาพ + คลิปรีวิว</p>
+        </header>
+
+        <div class="panel-card">
+          <div class="card-title"><span class="num">1</span>สินค้า</div>
+          <div class="field">
+            <span class="field-label">รูปสินค้าจริง <span class="hint-strong">แนะนำมาก — คงฉลากตามรูป</span></span>
+            <div class="slot" data-slot="product-photo" data-title="รูปสินค้า — หน้าตรง เห็นฉลากชัด"></div>
+          </div>
+          <div class="field">
+            <label class="field-label" for="product-name">ชื่อสินค้า</label>
+            <input type="text" class="text-input" id="product-name" maxlength="80" placeholder="เช่น น้ำยาซักผ้า, ครีมบำรุงผิว" />
+            <div id="cat-indicator" class="cat-indicator hidden"></div>
+          </div>
+          <div class="field">
+            <label class="field-label" for="product-details">รายละเอียด / จุดขาย <span class="hint-strong">AI อ่านช่องนี้ก่อนเสมอ</span></label>
+            <textarea class="text-input" id="product-details" rows="3" placeholder="เช่น สูตรเข้มข้น กลิ่นหอมติดนาน ขจัดคราบฝังลึก ขวดสีฟ้า"></textarea>
+            <p class="hint" id="product-details-hint">ยิ่งกรอกละเอียด ฉาก/จุดขายยิ่งตรง — เว้นว่าง ระบบจะคิดฉากให้เอง</p>
+          </div>
+          <div class="field narrow">
+            <label class="field-label" for="product-count">จำนวนชุด</label>
+            <div class="stepper"><button type="button" class="step" data-for="product-count" data-step="-1" aria-label="ลดจำนวน">−</button><input type="number" class="text-input" id="product-count" value="5" min="1" max="50" /><button type="button" class="step" data-for="product-count" data-step="1" aria-label="เพิ่มจำนวน">+</button></div>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="card-title"><span class="num">2</span>สไตล์ภาพ</div>
+          <div class="tiles" role="radiogroup" aria-label="สไตล์ภาพ">
+            <label><input type="radio" name="product-style" value="auto" checked /><span><i>🤖</i><b>ให้ระบบคิดฉาก</b><small>คนใช้สินค้าจริง</small></span></label>
+            <label><input type="radio" name="product-style" value="holding" /><span><i>🙋</i><b>คนถือโชว์</b><small>ไลฟ์ / รีวิว เห็นหน้า</small></span></label>
+            <label><input type="radio" name="product-style" value="hands" /><span><i>✋</i><b>เห็นแค่มือ</b><small>โคลสอัพ ไม่เห็นหน้า</small></span></label>
+            <label><input type="radio" name="product-style" value="warehouse" /><span><i>📦</i><b>โกดัง ลังเพียบ</b><small>ไวรัล ไม่เห็นหน้า</small></span></label>
+            <label><input type="radio" name="product-style" value="tabletop" /><span><i>🍽️</i><b>วางโชว์</b><small>โปรดักต์ช็อต ไม่มีคน</small></span></label>
+            <label><input type="radio" name="product-style" value="quick" /><span><i>⚡</i><b>มือถือสินค้า</b><small>คลังฉาก ไม่ใช้ AI</small></span></label>
+          </div>
+          <div class="field hidden gap" id="quick-hands-field">
+            <span class="field-label">มือที่ถือสินค้า</span>
+            <div class="seg seg-3" role="radiogroup" aria-label="มือที่ถือสินค้า">
+              <label><input type="radio" name="quick-hands" value="any" checked /><span>สุ่ม</span></label>
+              <label><input type="radio" name="quick-hands" value="female" /><span>มือผู้หญิง</span></label>
+              <label><input type="radio" name="quick-hands" value="male" /><span>มือผู้ชาย</span></label>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="quick-headline-toggle" checked />
+              <span class="toggle-text"><b>พาดหัวมินิมอลบนภาพ</b><small>ลายมือสีขาวเล็กๆ มุมซ้ายบน · ปิด = ภาพสะอาดไม่มีตัวหนังสือ</small></span>
+              <span class="switch" aria-hidden="true"></span>
+            </label>
+            <textarea class="text-input" id="quick-headline-text" rows="2" style="margin-top:8px" aria-label="พาดหัวบนภาพ"
+              placeholder="พิมพ์พาดหัวเอง 1 บรรทัด = 1 ชุด (วนใช้) · เว้นว่าง = สุ่มพาดหัวให้ไม่ซ้ำกัน"></textarea>
+          </div>
+          <div class="ai-only gap" id="product-ai-fields">
+            <label class="toggle">
+              <input type="checkbox" id="product-16s-toggle" />
+              <span class="toggle-text"><b>คลิป 2 ท่อน</b><small>เพิ่มบทปิดการขาย = วิดีโอที่ 2 จากภาพเดียวกัน</small></span>
+              <span class="switch" aria-hidden="true"></span>
+            </label>
+            <label class="toggle">
+              <input type="checkbox" id="product-headline-toggle" checked />
+              <span class="toggle-text"><b>พาดหัวบนภาพ</b><small>ฮุกขึ้นปกคลิป — ปิด = ภาพสะอาดไม่มีตัวหนังสือ</small></span>
+              <span class="switch" aria-hidden="true"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="panel-card lock-card" id="product-presenter">
+          <div class="card-title"><span class="num">3</span>พรีเซ็นเตอร์</div>
+          <span class="field-label" id="product-gender-label">เพศพรีเซ็นเตอร์ / เสียงพากย์</span>
+          <div class="seg seg-3" role="radiogroup" aria-labelledby="product-gender-label">
+            <label><input type="radio" name="product-gender" value="" checked /><span>🤖 AI เลือก</span></label>
+            <label><input type="radio" name="product-gender" value="female" /><span>👩 หญิง</span></label>
+            <label><input type="radio" name="product-gender" value="male" /><span>👨 ชาย</span></label>
+          </div>
+          <div id="product-lock-fields">
+            <div class="field gap">
+              <label class="field-label" for="product-age">อายุพรีเซ็นเตอร์ <span class="hint-strong">ไม่บังคับ</span></label>
+              <input type="text" class="text-input" id="product-age" maxlength="20" placeholder="เช่น 25, 45, ห้าสิบห้า — เว้นว่าง = วัยรุ่น/หนุ่มสาว" />
+            </div>
+            <span class="field-label">ใบหน้า</span>
+            <div class="seg seg-3" role="radiogroup" aria-label="ล็อกใบหน้าพรีเซ็นเตอร์">
+              <label><input type="radio" name="product-face" value="none" checked /><span>🎲 คนละคน</span></label>
+              <label><input type="radio" name="product-face" value="first" /><span>👤 คนเดิมทุกชุด</span></label>
+              <label><input type="radio" name="product-face" value="photo" /><span>📷 จากรูปหน้า</span></label>
+            </div>
+            <div class="slot hidden" data-slot="product-face" data-title="รูปหน้าพรีเซ็นเตอร์ — หน้าตรง ชัด"></div>
+
+            <span class="field-label gap">ชุด</span>
+            <div class="seg seg-2" role="radiogroup" aria-label="ล็อกชุดพรีเซ็นเตอร์">
+              <label><input type="radio" name="product-outfit" value="free" checked /><span>👗 ตามฉาก</span></label>
+              <label><input type="radio" name="product-outfit" value="first" /><span>🔁 ชุดเดิมทุกชุด</span></label>
+              <label><input type="radio" name="product-outfit" value="photo" /><span>📷 จากรูปชุด</span></label>
+              <label><input type="radio" name="product-outfit" value="face_photo" /><span>🧍 ชุดในรูปหน้า</span></label>
+            </div>
+            <div class="slot hidden" data-slot="product-outfit" data-title="รูปชุดพรีเซ็นเตอร์ — เห็นทั้งชุด"></div>
+          </div>
+          <div class="lock-note" id="product-lock-note"></div>
+          <details class="lock-preview hidden" id="product-lock-preview"><summary>ดูคำสั่งล็อกที่ส่งให้ Meta AI</summary><div class="block-body en"></div></details>
+        </div>
+
+        <div class="panel-card">
+          <div class="card-title"><span class="num">4</span>สร้างใน Meta AI</div>
+          <div class="seg" role="radiogroup" aria-label="สร้างใน Meta AI">
+            <label><input type="radio" name="product-output" value="video" checked /><span>🎬 ภาพ + วิดีโอ</span></label>
+            <label><input type="radio" name="product-output" value="image" /><span>🖼️ ภาพอย่างเดียว</span></label>
+          </div>
+        </div>
+
+        <div class="action-bar">
+          <button class="btn-primary" id="btn-gen-product"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.6L18 9l-4.2 1.4L12 15l-1.8-4.6L6 9l4.2-1.4z"/><path d="M19 14v4M21 16h-4"/></svg> สร้าง</button>
+        </div>
+      </section>
+
+      <!-- ===== คิวงาน ===== -->
+      <section class="tab-panel" id="tab-queue">
+        <div class="engine-card" id="engine-card">
+          <div class="engine-text">
+            <div id="engine-status" class="engine-status">—</div>
+            <div id="engine-ago" class="small"></div>
+          </div>
+          <div class="engine-actions">
+            <button class="btn-primary" id="btn-toggle">เริ่มทำงาน</button>
+            <button class="btn-ghost" id="btn-open-meta" title="เปิดแท็บ meta.ai">เปิด meta.ai</button>
+          </div>
+        </div>
+        <div id="batches" class="cards"></div>
+        <div id="queue-empty" class="empty hidden"><div class="empty-ico">🎬</div>ยังไม่มีงาน<br><span class="small">ไปที่แท็บ “ตัวตน” หรือ “สินค้า” เพื่อเริ่ม</span></div>
+      </section>
+
+      <!-- ===== ตั้งค่า ===== -->
+      <section class="tab-panel" id="tab-settings">
+        <header class="hero">
+          <h2>ตั้งค่า</h2>
+          <p>AI ที่เขียนพรอมต์ ที่เก็บไฟล์ และคลังฉาก</p>
+        </header>
+
+        <div class="panel-card">
+          <div class="card-title">🤖 AI / API <span id="api-state" class="chip queued">ยังไม่ตั้งค่า</span></div>
+          <div class="field">
+            <label class="field-label" for="provider-select">ผู้ให้บริการ AI</label>
+            <select class="text-input" id="provider-select">
+              <option value="deepseek">DeepSeek (คลาวด์)</option>
+              <option value="local">AI ในเครื่อง / OpenAI-compatible</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label" for="base-url">Base URL (API endpoint)</label>
+            <input type="text" class="text-input" id="base-url" placeholder="https://api.deepseek.com" autocomplete="off" />
+            <p class="hint">ค่าเริ่มต้น = DeepSeek · AI ในเครื่อง เช่น <code>http://localhost:11434/v1</code> · ระบบต่อ <code>/chat/completions</code> ให้เอง</p>
+          </div>
+          <div class="field">
+            <label class="field-label" for="api-key">API Key</label>
+            <div class="row">
+              <input type="password" class="text-input" id="api-key" placeholder="sk-..." autocomplete="off" spellcheck="false" />
+              <button class="btn-ghost" id="toggle-key">แสดง</button>
+            </div>
+            <p class="hint">ขอคีย์ที่ <a href="https://platform.deepseek.com/api_keys" target="_blank">platform.deepseek.com</a> — คีย์เก็บในเบราว์เซอร์นี้เท่านั้น</p>
+          </div>
+          <div class="field">
+            <label class="field-label" for="model-select">โมเดล</label>
+            <input type="text" class="text-input" id="model-select" list="model-list" placeholder="deepseek-v4-flash" autocomplete="off" />
+            <datalist id="model-list">
+              <option value="deepseek-v4-flash">คิดก่อนตอบ — ทำตามกฎดีกว่า (แนะนำ)</option>
+              <option value="deepseek-chat">ตอบทันที — เร็วกว่า</option>
+              <option value="deepseek-v4-pro">รุ่นใหญ่ — ช้าและแพงกว่า</option>
+              <option value="qwen3:30b-instruct">Ollama ในเครื่อง</option>
+            </datalist>
+          </div>
+          <div class="btn-pair">
+            <button class="btn-primary" id="btn-save-ai">บันทึก</button>
+            <button class="btn-ghost" id="btn-test-ai">ทดสอบการเชื่อมต่อ</button>
+          </div>
+          <div id="ai-msg" class="form-msg" role="status"></div>
+        </div>
+
+        <div class="panel-card">
+          <div class="card-title">📁 การบันทึกไฟล์</div>
+          <div class="field">
+            <label class="field-label" for="set-folder">โฟลเดอร์หลัก (ใน Downloads ของ Chrome)</label>
+            <input type="text" class="text-input" id="set-folder" maxlength="50" autocomplete="off" />
+            <p class="hint">ไฟล์อยู่ที่ <code>Downloads / <span id="set-folder-echo"></span> / ชื่อชุด /</code></p>
+          </div>
+          <div class="field">
+            <label class="field-label" for="set-attempts">ถ้าสร้างไม่สำเร็จ ลองใหม่รวมกี่ครั้งต่อชุด</label>
+            <select class="text-input" id="set-attempts">
+              <option value="1">1 ครั้ง (ไม่ลองใหม่)</option>
+              <option value="2">2 ครั้ง</option>
+              <option value="3">3 ครั้ง</option>
+              <option value="4">4 ครั้ง</option>
+              <option value="5">5 ครั้ง</option>
+            </select>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="set-save-image" />
+            <span class="toggle-text"><b>บันทึกภาพนิ่งคู่กับวิดีโอ</b><small>โหมด “ภาพอย่างเดียว” บันทึกภาพเสมอ</small></span>
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="set-clean-chats" />
+            <span class="toggle-text"><b>ลบแชทเก่าใน meta.ai อัตโนมัติ</b><small>ปิดไว้เป็นค่าเริ่มต้น เพราะทำให้แต่ละงานช้าลง · เหลือแค่แชทล่าสุดที่ส่วนขยายสร้าง · แชทอื่นของคุณไม่ถูกแตะ · ลบแล้วกู้คืนไม่ได้</small></span>
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+          <div class="btn-pair">
+            <button class="btn-primary" id="btn-save-settings">บันทึกการตั้งค่า</button>
+          </div>
+          <span id="settings-saved" class="saved-msg"></span>
+        </div>
+
+        <div class="panel-card">
+          <div class="card-title">⚡ คลังฉาก “มือถือสินค้า”</div>
+          <p class="hint" id="scene-usage" style="margin:0 0 10px"></p>
+          <button class="btn-ghost" id="btn-reset-scenes">ล้างประวัติฉากที่เคยใช้</button>
+        </div>
+
+        <div class="panel-card">
+          <div class="card-title">🔐 รหัสเปิดใช้งาน <span class="chip done">ใช้งานได้</span></div>
+          <p class="hint" style="margin:0" id="lic-exp">—</p>
+          <button class="btn-ghost" id="btn-new-code" style="margin-top:10px">ใส่รหัสใหม่</button>
+        </div>
+
+        <div class="panel-card">
+          <div class="card-title">💡 วิธีใช้</div>
+          <ol class="howto">
+            <li>เปิดแท็บ <a href="https://www.meta.ai/" target="_blank">meta.ai</a> แล้วล็อกอินค้างไว้</li>
+            <li>ไปที่ “ตัวตน” หรือ “สินค้า” กรอกข้อมูล แล้วกด <b>สร้าง</b> — งานเข้าคิวและสร้างทีละชุดเอง</li>
+            <li>ระหว่างทำงาน <b>อย่าพิมพ์หรือคลิกในแท็บ meta.ai</b> และให้แท็บนั้นแสดงอยู่บนจอ</li>
+            <li>ปิดแผงนี้ได้ ระบบทำงานต่อเบื้องหลัง ดูสถานะที่ไอคอนบนทูลบาร์</li>
+          </ol>
+          <p class="hint" style="margin-top:10px">ถ้า Chrome ถามที่เก็บไฟล์ทุกครั้ง ให้ปิด “ถามตำแหน่งที่จะบันทึกไฟล์…” ที่ <code>chrome://settings/downloads</code></p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 🔐 ล็อกจนกว่าจะใส่รหัสเปิดใช้งาน (ตรวจในเครื่อง — lib/license.js) -->
+  <div id="lock" class="lock hidden">
+    <div class="lock-card">
+      <div class="logo-mark big" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M8 5.5v13l10.5-6.5z"/></svg></div>
+      <h2>เปิดใช้งาน Vid Studio</h2>
+      <p class="muted">กรอก <b>รหัสเปิดใช้งาน</b> ที่ได้รับ — ใส่ครั้งเดียว ระบบจำไว้ในเบราว์เซอร์นี้</p>
+      <label class="field-label" for="license-input">รหัสเปิดใช้งาน</label>
+      <input type="text" id="license-input" class="text-input" placeholder="VS-YYYYMMDD-XXXXXX" autocomplete="off" spellcheck="false" />
+      <button class="btn-primary" id="btn-activate">เปิดใช้งาน</button>
+      <div id="license-msg" class="form-msg" role="status"></div>
+      <button class="btn-ghost hidden" id="lock-close" style="margin-top:10px">ปิด</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script type="module" src="sidepanel.js"></script>
+</body>
+</html>
