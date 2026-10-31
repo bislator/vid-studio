@@ -1,0 +1,24 @@
+{
+  "name": "vid-studio",
+  "version": "1.0.0",
+  "description": "Chrome MV3 extension: drives an open **meta.ai** tab to generate images + 10-second 9:16 clips in batches, with DeepSeek writing the prompts. Everything runs from the side panel — no Telegram, no server.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bislator/vid-studio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/bislator/vid-studio/issues"
+  },
+  "homepage": "https://github.com/bislator/vid-studio#readme",
+  "dependencies": {
+    "ws": "^8.22.0"
+  }
+}

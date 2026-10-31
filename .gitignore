@@ -2,3 +2,5 @@ dist/
 node_modules/
 *.zip
 .DS_Store
+node_modules/
+package-lock.json
