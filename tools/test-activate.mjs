@@ -138,9 +138,60 @@ try {
     check('expiry displayed', /ใช้ได้ถึง/.test(r.exp), r.exp);
   });
 
+  // Verify the bundled Thai font is actually loaded before capture.
+  check('Prompt Thai font loaded', await panel.evalJs(`(async () => {
+    await document.fonts.load('14px Prompt', 'ภาษาไทย');
+    await document.fonts.ready;
+    return document.fonts.check('14px Prompt', 'ภาษาไทย') && getComputedStyle(document.body).fontFamily.includes('Prompt');
+  })()`));
+  check('persona wizard navigation and retained values', await panel.evalJs(`(() => {
+    const cards = [...document.querySelectorAll('#tab-persona > .panel-card')];
+    const shown = () => cards.findIndex(c => !c.classList.contains('wizard-inactive'));
+    const input = document.querySelector('#persona-name');
+    const old = input.value; input.value = 'ทดสอบตัวตน';
+    if (shown() !== 0) return false;
+    for (let i = 1; i < 4; i++) { document.querySelector('#persona-next').click(); if (shown() !== i) return false; }
+    if (document.querySelector('#btn-gen-persona').closest('.action-bar').classList.contains('wizard-inactive')) return false;
+    document.querySelector('#persona-prev').click();
+    if (shown() !== 2) return false;
+    document.querySelector('.persona-progress button').click();
+    const ok = shown() === 0 && input.value === 'ทดสอบตัวตน'; input.value = old;
+    return ok;
+  })()`));
+  check('hamburger navigation and Escape', await panel.evalJs(`(() => {
+    const menu = document.querySelector('#studio-menu');
+    const trigger = document.querySelector('.menu-trigger');
+    if (!menu.hidden) return false;
+    for (const tab of ['product','queue','settings','persona']) {
+      trigger.click(); if (menu.hidden) return false;
+      menu.querySelector('[data-tab="' + tab + '"]').click();
+      if (!menu.hidden || !document.querySelector('#tab-' + tab).classList.contains('active')) return false;
+    }
+    trigger.click(); document.dispatchEvent(new KeyboardEvent('keydown', {key:'Escape',bubbles:true}));
+    return menu.hidden && document.title === 'bislator meta studio';
+  })()`));
   // 4. unlocked panel screenshot
   const shot = await panel.rawCall('Page.captureScreenshot', { format: 'png' });
   writeFileSync(SHOT, Buffer.from(shot.data, 'base64'));
+  await panel.evalJs(`document.querySelector('.menu-trigger').click()`);
+  const menuShot = await panel.rawCall('Page.captureScreenshot', {format:'png'});
+  writeFileSync(SHOT.replace(/\.png$/, '-menu.png'), Buffer.from(menuShot.data, 'base64'));
+  await panel.evalJs(`document.querySelector('.menu-trigger').click()`);
+  if (process.env.CAPTURE_TABS === '1') {
+    for (const tab of ['persona', 'product', 'queue', 'settings']) {
+      await panel.evalJs(`document.querySelector('[data-tab="${tab}"]').click()`);
+      await sleep(350);
+      check(`${tab} tab active`, await panel.evalJs(`document.querySelector('#tab-${tab}').classList.contains('active')`));
+      const height = await panel.evalJs(`document.querySelector('#tab-${tab}').scrollHeight + 250`);
+      await panel.rawCall('Emulation.setDeviceMetricsOverride', {width:500,height:Math.max(900,height),deviceScaleFactor:1,mobile:false});
+      await panel.evalJs(`document.querySelector('.content').scrollTop = 0`);
+      await sleep(200);
+      const image = await panel.rawCall('Page.captureScreenshot', {format:'png',captureBeyondViewport:true});
+      const dest = SHOT.replace(/\.png$/, `-${tab}.png`);
+      writeFileSync(dest, Buffer.from(image.data, 'base64'));
+      console.log('Saved:', dest);
+    }
+  }
   panel.close();
 
   // 5. persistence: brand-new panel must come up unlocked (same profile storage)

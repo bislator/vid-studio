@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Vid Studio",
-  "version": "3.0.0",
+  "name": "bislator meta studio",
+  "version": "3.1.0",
   "minimum_chrome_version": "120",
   "description": "โหมดตัวตนและโหมดสินค้าแบบ Prompt Creator Studio — DeepSeek เขียนพรอมต์ แล้วสร้างภาพ + คลิป 9:16 ในแท็บ Meta AI ที่เปิดไว้ บันทึกลงเครื่องอัตโนมัติ",
   "permissions": ["storage", "unlimitedStorage", "alarms", "scripting", "tabs", "sidePanel", "downloads"],
@@ -12,7 +12,7 @@
     { "matches": ["https://www.meta.ai/*", "https://meta.ai/*"], "js": ["raf_keepalive.js"], "run_at": "document_start", "world": "MAIN" }
   ],
   "side_panel": { "default_path": "sidepanel.html" },
-  "action": { "default_title": "Vid Studio — เปิด/ปิดแผงด้านข้าง" },
+  "action": { "default_title": "bislator meta studio — เปิด/ปิดแผงด้านข้าง" },
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",

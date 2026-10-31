@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vid Studio</title>
+  <title>bislator meta studio</title>
   <link rel="stylesheet" href="sidepanel.css" />
+  <link rel="stylesheet" href="professional.css" />
 </head>
 <body>
   <div id="app" class="app">
     <div class="topbar">
       <div class="logo-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5.5v13l10.5-6.5z"/></svg></div>
-      <div class="logo-text"><strong>Vid Studio</strong><span>ภาพ + คลิป 9:16 ใน Meta AI · v<span id="app-ver">—</span></span></div>
+      <div class="logo-text"><strong>bislator meta studio</strong><span>ภาพ + คลิป 9:16 ใน Meta AI · v<span id="app-ver">—</span></span></div>
       <div class="status-pill" id="status-pill" title=""><span id="status-dot" class="dot-status"></span><span id="status-badge">—</span></div>
     </div>
     <nav class="tabbar">
@@ -391,7 +392,7 @@
   <div id="lock" class="lock hidden">
     <div class="lock-card">
       <div class="logo-mark big" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M8 5.5v13l10.5-6.5z"/></svg></div>
-      <h2>เปิดใช้งาน Vid Studio</h2>
+      <h2>เปิดใช้งาน bislator meta studio</h2>
       <p class="muted">กรอก <b>รหัสเปิดใช้งาน</b> ที่ได้รับ — ใส่ครั้งเดียว ระบบจำไว้ในเบราว์เซอร์นี้</p>
       <label class="field-label" for="license-input">รหัสเปิดใช้งาน</label>
       <input type="text" id="license-input" class="text-input" placeholder="VS-YYYYMMDD-XXXXXX" autocomplete="off" spellcheck="false" />
@@ -403,5 +404,7 @@
 
   <div id="toast" class="toast" role="status"></div>
   <script type="module" src="sidepanel.js"></script>
+  <script type="module" src="persona-wizard.js"></script>
+  <script type="module" src="studio-menu.js"></script>
 </body>
 </html>
